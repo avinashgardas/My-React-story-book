@@ -5,6 +5,7 @@ import HorizontalScroll from './Carousel/Horizontal/HorizontalScroll';
 import Carousel from './Carousel/Slider/Carousel';
 import SendNotification from './APIs/Firebase/FCM/SendNotification';
 import JsonToHTML from './APIs/Parsing/JsonToHTML';
+import ShineGradientAnimation from './Loader/ShineGradientAnimation';
 
 class Home extends Component {
     render() {
@@ -22,6 +23,8 @@ class Home extends Component {
                 {/* <SendNotification /> */}
 
                 {/* <JsonToHTML /> */}
+
+                <ShineGradientAnimation />
             </div>
         )
     }
