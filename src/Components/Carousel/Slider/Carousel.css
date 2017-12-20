@@ -5,6 +5,8 @@
     margin-bottom: 8px;
     margin-left: 64px;
     margin-right: 8px;
+    /* container is relative, so that buttons are absolute */
+    position: relative;
 }
 
 .carousel-viewport {
@@ -15,6 +17,8 @@
 
     -webkit-box-flex: 1;
     flex-grow: 1;
+    z-index: 1;
+    position: relative;
 }
 
 .carousel-viewport::-webkit-scrollbar { /* to remove scroll bar in webkit */
@@ -22,24 +26,64 @@
 }
 
 .carousel-nav {
-    flex-basis: 35px; /* basically its like width */
-    flex-shrink: 0; /* shrinking is false */
+    /* flex-basis: 35px; basically its like width */
+    /* flex-shrink: 0;  shrinking is false */
     cursor: pointer;
-    background-color: white;
     padding: 0;
-    opacity: .8;
-    transition: opacity .2s ease-in-out;
+    /* transition: opacity .2s ease-in-out; */
+    opacity: 0.9;
+
+    position: absolute;
+    top: 50%; /* make button center of container */
+    transform: translateY(-60%);
+    bottom: 0;
+    z-index: 3;
+
+    -webkit-transition: opacity 0.5s ease-in-out,visibility 0.5s;
+    transition: opacity 0.5s ease-in-out,visibility 0.5s;
 }
 .carousel-nav:hover {
     opacity: 1;
 }
 
 .carousel-left-nav {
-    
+    left: 0;
 }
 
 .carousel-right-nav {
+    right: 0;
+}
 
+.carousel-nav-disabled {
+    opacity: 0;
+    z-index: 0;
+    cursor: default;
+    pointer-events: none;
+    transition: none; /* to prevent on load transition to appear when disabled*/
+}
+.carousel-nav-disabled:hover {
+    opacity: 0;
+}
+
+.btn-round {
+    background-color: #fff;
+    color: #757575;
+    border-radius: 999em;
+    width: 48px;
+    height: 48px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08), inset 0 0 0 0 rgba(0,0,0,0.10), inset 0 0 0 0 rgba(255,255,255,0.50);
+
+    line-height: 1;
+    
+    /* position: relative; */
+    cursor: pointer;
+}
+
+.btn-round span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
 }
 
 /* slides */

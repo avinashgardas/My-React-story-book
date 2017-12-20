@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import './Carousel.css';
 import data from './data.json';
 import scrollTo from './scrollToAnimate';
+import throttle from 'lodash.throttle';
+import classnames from 'classnames';
 
 function Slide(props) {
     // {
@@ -31,9 +33,13 @@ function Slide(props) {
 class Carousel extends Component {
     constructor(props) {
         super(props);
+        this.animatingLeft = false;
+        this.animatingRight = false;
 
         this.state = {
-            numberOfSlidesToScroll: 6
+            numberOfSlidesToScroll: 6,
+            allTheWayLeft: false,
+            allTheWayRight: false
         }
     }
 
@@ -42,11 +48,77 @@ class Carousel extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener("resize", this.onResize);
+        //call this to determine carousel buttons state
+        this.checkIfSlidesAllTheWayOver();
+
+        //call this when component has mounted, inorder to determine innerWidth
+        this.checkNumberOfSlidesToScroll();
+
+        window.addEventListener("resize", throttle(this.onResize, 250));
+        window.addEventListener("keydown", this.onKeydown);
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", this.onResize);
+        window.removeEventListener("resize", throttle(this.onResize, 250));
+    }
+
+    onKeydown = (event) => {
+        const {keyCode} = event;
+        let leftArrow = keyCode === 37;
+        let rightArrow = keyCode === 39;
+
+        if(leftArrow && !this.state.allTheWayLeft) { //left-arrow && not all the way left
+            if(!this.animatingLeft) {
+                //helps to avoid listening more than 1 keyboard input till animatingLeft becomes false, when carousel is animating using Promise
+                this.animatingLeft = true;
+                this.handleLeftNav()
+                    .then(()=>{
+                        this.animatingLeft = false;
+                    });
+            }
+            
+        }
+        else if(rightArrow) {
+            if(!this.animatingRight && !this.state.allTheWayRight) { //right-arrow && not all the way right
+                //helps to avoid listening more than 1 keyboard input till animatingLeft becomes false, when carousel is animating using Promise
+                this.animatingRight = true;
+                this.handleRightNav()
+                    .then(()=>{
+                        this.animatingRight = false;
+                    })
+            }
+        }
+    }
+
+    onScrollCarousel = (event) => {
+        this.checkIfSlidesAllTheWayOver();
+    }
+
+    checkIfSlidesAllTheWayOver = () => {
+        const {carouselViewport} = this.refs;
+        let allTheWayLeft = false, allTheWayRight = false; //default
+
+        //allTheWayLeft
+        if(carouselViewport.scrollLeft === 0) {
+            allTheWayLeft = true;
+        }
+
+        //allTheWayRight: if scrollLeft + length Of ViewPort offsetWidth === real length of viewport
+        //for 10 carousel-items each of width 100. 10 * 100 === real length of viewport
+        let amountScrolled = carouselViewport.scrollLeft;
+        let viewPortLength = carouselViewport.clientWidth; //or carouselViewport.offsetWidth
+        let scrolled_plus_viewportlength = amountScrolled + viewPortLength;
+
+        let totalWidthOfCarousel = carouselViewport.scrollWidth;
+        
+        if(scrolled_plus_viewportlength === totalWidthOfCarousel) {
+            allTheWayRight = true;
+        }
+
+        if(this.state.allTheWayLeft !== allTheWayLeft || this.state.allTheWayRight !== allTheWayRight) {
+            this.setState({allTheWayLeft, allTheWayRight});
+        }
+        
     }
 
     checkNumberOfSlidesToScroll = () => {
@@ -60,8 +132,8 @@ class Carousel extends Component {
         }
 
         if(this.state.numberOfSlidesToScroll !== numberOfSlidesToScroll) {
-            console.log('im here', numberOfSlidesToScroll);
-            this.setState({numberOfSlidesToScroll: numberOfSlidesToScroll});
+            // single object in set state, skip writing {numberOfSlidesToScroll: numberOfSlidesToScroll}
+            this.setState({numberOfSlidesToScroll});
         }
     }
 
@@ -77,7 +149,7 @@ class Carousel extends Component {
             }
         }
         else {
-            let widthOfEachSlide = 100;
+            let widthOfEachSlide = document.querySelector('.slide').offsetWidth;
             let timeToMoveOneSlide = 200;
             
             return {
@@ -91,12 +163,14 @@ class Carousel extends Component {
     renderSlides() {
         return data.map((country, index)=>{
             return(
-                <Slide country={country} key={index}/>
+                <Slide country={country} 
+                key={index}
+                ref={compSlide => this.slide = compSlide}/>
             )
         });
     }
 
-    handleLeftNav = (e) => {
+    handleLeftNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
 
@@ -105,15 +179,16 @@ class Carousel extends Component {
         let newPosition = carouselViewport.scrollLeft - widthToScroll;
 
         //scroll with animation
-        scrollTo({
+        let promise = scrollTo({
             element: carouselViewport, 
             to: newPosition, 
             duration: timeToScroll, 
             scrollDirection: 'scrollLeft'
         });
+        return promise;
     }
 
-    handleRightNav = (e) => {
+    handleRightNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
 
@@ -122,24 +197,42 @@ class Carousel extends Component {
         let newPosition = carouselViewport.scrollLeft + widthToScroll;
 
         //scroll with animation
-        scrollTo({
+        let promise = scrollTo({
             element: carouselViewport, 
             to: newPosition, 
             duration: timeToScroll, 
             scrollDirection: 'scrollLeft'
         });
+        return promise;
     }
 
     render() {
+        const {allTheWayLeft, allTheWayRight} = this.state;
+        const navClasses = classnames({
+            'carousel-nav': true,
+            'btn-round': true,
+            'display-flex-center': true
+        });
+        const leftNavClasses = classnames({
+            'carousel-left-nav': true,
+            'carousel-nav-disabled': allTheWayLeft
+        }, navClasses);
+        const rightNavClasses = classnames({
+            'carousel-right-nav': true,
+            'carousel-nav-disabled': allTheWayRight
+        }, navClasses);
+
         return(
             <div className="carousel-container">
-                <button className="carousel-nav carousel-left-nav" onClick={this.handleLeftNav}>&#60;</button>
+                <div className={leftNavClasses} onClick={this.handleLeftNav}><span>&#60;</span></div>
 
-                <div className="carousel-viewport" ref="carouselViewport">
+                <div className="carousel-viewport" 
+                ref="carouselViewport"
+                onScroll={throttle(this.onScrollCarousel, 250)}>
                     {this.renderSlides()}
                 </div>
 
-                <button className="carousel-nav carousel-right-nav" onClick={this.handleRightNav}>&#62;</button>
+                <div className={rightNavClasses} onClick={this.handleRightNav}><span>&#62;</span></div>
             </div>
         )
     }
