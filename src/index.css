@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.blur-image-src{
+  height: 200px;
+  width:200px;
+  animation: blurImageAnim;
+}
+
+@keyframes blurImageAnim {
+  0%,100%{
+    filter:blur(0);
+  }
+  50%{
+    filter:blur(10px);
+  }
+}
+
+/* generic css */
+.boxshadow{
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  border-radius: 2px;
+  /* -webkit-transition: box-shadow 200ms cubic-bezier(0.4,0.0,0.2,1);
+  transition: box-shadow 200ms cubic-bezier(0.4,0.0,0.2,1); */
+}
+
+.boxshadow:hover{
+  box-shadow: 0.5px 2.5px 2.5px 0.5px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+
+.display-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.display-flex-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.display-flex-end {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/* components */
+.horizontal-scroll-wrapper {
+  position: relative;
+  width: 99%;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.horizontal-scroll-wrapper div {
+  display: inline-block;
+  white-space: normal;
+}
+
+.horizontal-scroll-item {
+  padding: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px; margin-right: 8px; 
+  height: 100px;
+  width: 60px;
+}

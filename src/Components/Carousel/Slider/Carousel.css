@@ -1,0 +1,78 @@
+/* carousel */
+.carousel-container {
+    display: flex;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 64px;
+    margin-right: 8px;
+}
+
+.carousel-viewport {
+    white-space: nowrap; /* wrap all elements in carousel-viewport to 1 line; excess data is displayed out of screen */
+    overflow-y: hidden; /* to hide excess data */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+}
+
+.carousel-viewport::-webkit-scrollbar { /* to remove scroll bar in webkit */
+    /* display: none; */
+}
+
+.carousel-nav {
+    flex-basis: 35px; /* basically its like width */
+    flex-shrink: 0; /* shrinking is false */
+    cursor: pointer;
+    padding: 0;
+    opacity: .8;
+}
+.carousel-nav:hover {
+    opacity: 1;
+}
+
+.carousel-left-nav {
+
+}
+
+.carousel-right-nav {
+
+}
+
+/* slides */
+.slide {
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    margin-left: 4px;
+    margin-right: 4px;
+    padding: 0px;
+    display: inline-block; /* so slides are next to each other */
+    vertical-align: top;
+    white-space: normal;/* to remove parent's white space */
+
+    text-align: center;
+}
+.slide:first-child {
+    margin-left: 8px;
+}
+.slide:last-child {
+    margin-right: 8px;
+}
+
+/* slide details */
+.slide-div-background-image-full {
+    background-repeat: no-repeat !important;
+    background-position: 50% !important;
+    background-size: cover !important;
+  }
+.slide-div-title {
+    font-size: 13.5px;
+    text-overflow: ellipsis;
+}
+.slide-div-code {
+    font-size: 11px;
+    color: #848484;
+    text-overflow: ellipsis;
+}
