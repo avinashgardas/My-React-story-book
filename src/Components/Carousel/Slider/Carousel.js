@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './Carousel.css';
 import data from './data.json';
+import scrollTo from './scrollToAnimate';
 
 function Slide(props) {
     // {
@@ -31,8 +32,60 @@ class Carousel extends Component {
     constructor(props) {
         super(props);
 
-        // this.handleLeftNav = this.handleLeftNav.bind(this);
-        // this.handleRightNav = this.handleRightNav.bind(this);
+        this.state = {
+            numberOfSlidesToScroll: 6
+        }
+    }
+
+    onResize = () => {
+        this.checkNumberOfSlidesToScroll();
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
+    }
+
+    checkNumberOfSlidesToScroll = () => {
+        var numberOfSlidesToScroll;
+
+        if(window.innerWidth <= 900) {
+            numberOfSlidesToScroll = 'full';
+        }
+        else {
+            numberOfSlidesToScroll = 6;
+        }
+
+        if(this.state.numberOfSlidesToScroll !== numberOfSlidesToScroll) {
+            console.log('im here', numberOfSlidesToScroll);
+            this.setState({numberOfSlidesToScroll: numberOfSlidesToScroll});
+        }
+    }
+
+    widthAndTimeToScroll = () => {
+        const {carouselViewport} = this.refs;
+        let numberOfSlidesToScroll = this.state.numberOfSlidesToScroll;
+
+        if(numberOfSlidesToScroll === 'full') {
+            //widthToScroll: total width of carousel view port for mobile
+            return {
+                widthToScroll: carouselViewport.offsetWidth,
+                timeToScroll: 400
+            }
+        }
+        else {
+            let widthOfEachSlide = 100;
+            let timeToMoveOneSlide = 200;
+            
+            return {
+                //widthToScroll: dynamic width
+                widthToScroll: numberOfSlidesToScroll * widthOfEachSlide,
+                timeToScroll:  Math.min( (numberOfSlidesToScroll * timeToMoveOneSlide), 400)
+            }
+        }
     }
 
     renderSlides() {
@@ -44,27 +97,37 @@ class Carousel extends Component {
     }
 
     handleLeftNav = (e) => {
-        console.log(this.refs.carouselViewport.scrollLeft);
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
 
-        let numberOfSlidesToScroll = 6;
-        let widthOfEachSlide = 100;
-        let length = numberOfSlidesToScroll * widthOfEachSlide;
+        let { widthToScroll, timeToScroll } = this.widthAndTimeToScroll();
 
-        carouselViewport.scrollLeft -= length; /* short hand notofication */
+        let newPosition = carouselViewport.scrollLeft - widthToScroll;
+
+        //scroll with animation
+        scrollTo({
+            element: carouselViewport, 
+            to: newPosition, 
+            duration: timeToScroll, 
+            scrollDirection: 'scrollLeft'
+        });
     }
 
     handleRightNav = (e) => {
-        console.log(this.refs.carouselViewport.scrollLeft);
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
 
-        let numberOfSlidesToScroll = 6;
-        let widthOfEachSlide = 100;
-        let length = numberOfSlidesToScroll * widthOfEachSlide;
+        let {widthToScroll, timeToScroll} = this.widthAndTimeToScroll();
 
-        carouselViewport.scrollLeft += length; /* short hand notofication */
+        let newPosition = carouselViewport.scrollLeft + widthToScroll;
+
+        //scroll with animation
+        scrollTo({
+            element: carouselViewport, 
+            to: newPosition, 
+            duration: timeToScroll, 
+            scrollDirection: 'scrollLeft'
+        });
     }
 
     render() {

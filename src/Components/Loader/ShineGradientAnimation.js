@@ -7,7 +7,7 @@ class ShineGradientAnimation extends Component {
         return(
             <div>
                 <div className="demo" style={{height: 200}}>
-                    <h1></h1>
+                    <p>http://www.webtutorialplus.com/css-image-shine-glow-effect/</p>
                     <div className="show-off" />
                 </div>
 

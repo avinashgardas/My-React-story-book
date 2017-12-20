@@ -25,15 +25,17 @@
     flex-basis: 35px; /* basically its like width */
     flex-shrink: 0; /* shrinking is false */
     cursor: pointer;
+    background-color: white;
     padding: 0;
     opacity: .8;
+    transition: opacity .2s ease-in-out;
 }
 .carousel-nav:hover {
     opacity: 1;
 }
 
 .carousel-left-nav {
-
+    
 }
 
 .carousel-right-nav {
