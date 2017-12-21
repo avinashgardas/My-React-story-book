@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './Carousel.css';
+import './ImageCarousel.css';
 import data from './data.json';
-import scrollTo from './scrollToAnimate';
+import scrollTo from './../scrollToAnimate';
 import throttle from 'lodash.throttle';
 import classnames from 'classnames';
 
@@ -16,28 +16,20 @@ function Slide(props) {
 
     const {url,alpha3,file_url,name,license} = props.country;
     return(
-        <div id="#default-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
-            <div className="slide-div-background-image-full" style={{width: `100%`, height: 70, backgroundImage: `url('https:${file_url}')`}}></div>
-
-            <div className="slide-div-title display-flex-center" style={{width: `100%`, height: 50, padding: 0, marginTop: 4, marginBottom: 4}}>
-                <span >{name}</span>
-            </div>
-
-            <div className="slide-div-code display-flex-center" style={{width: `100%`, height: 30, padding: 0, marginTop: 0, marginBottom: 4}}>
-                {alpha3}
-            </div>
+        <div id="#image-carousel" className="slide image-slide boxshadow" style={{height: 300, width: `100%`}}>
+            <div className="slide-div-background-image-full" style={{width: `100%`, height: `100%`, backgroundImage: `url('https:${file_url}')`}}></div>
         </div>
     )
 }
 
-class Carousel extends Component {
+class ImageCarousel extends Component {
     constructor(props) {
         super(props);
         this.animatingLeft = false;
         this.animatingRight = false;
 
         this.state = {
-            numberOfSlidesToScroll: 6,
+            numberOfSlidesToScroll: 'full',
             allTheWayLeft: false,
             allTheWayRight: false
         }
@@ -52,7 +44,7 @@ class Carousel extends Component {
         this.checkIfSlidesAllTheWayOver();
 
         //call this when component has mounted, inorder to determine innerWidth
-        this.checkNumberOfSlidesToScroll();
+        //this.checkNumberOfSlidesToScroll();
 
         window.addEventListener("resize", throttle(this.onResize, 250));
         window.addEventListener("keydown", this.onKeydown);
@@ -117,8 +109,7 @@ class Carousel extends Component {
 
         if(this.state.allTheWayLeft !== allTheWayLeft || this.state.allTheWayRight !== allTheWayRight) {
             this.setState({allTheWayLeft, allTheWayRight});
-        }
-        
+        }      
     }
 
     checkNumberOfSlidesToScroll = () => {
@@ -128,7 +119,7 @@ class Carousel extends Component {
             numberOfSlidesToScroll = 'full';
         }
         else {
-            numberOfSlidesToScroll = 6;
+            numberOfSlidesToScroll = 'full';
         }
 
         if(this.state.numberOfSlidesToScroll !== numberOfSlidesToScroll) {
@@ -139,33 +130,17 @@ class Carousel extends Component {
 
     widthAndTimeToScroll = () => {
         const {carouselViewport} = this.refs;
-        let numberOfSlidesToScroll = this.state.numberOfSlidesToScroll;
-
-        if(numberOfSlidesToScroll === 'full') {
-            //widthToScroll: total width of carousel view port for mobile
-            return {
-                widthToScroll: carouselViewport.offsetWidth,
-                timeToScroll: 400
-            }
-        }
-        else {
-            let widthOfEachSlide = document.getElementById('#default-carousel').offsetWidth;
-            let timeToMoveOneSlide = 200;
-            
-            return {
-                //widthToScroll: dynamic width
-                widthToScroll: numberOfSlidesToScroll * widthOfEachSlide,
-                timeToScroll:  Math.min( (numberOfSlidesToScroll * timeToMoveOneSlide), 400)
-            }
+        
+        return {
+            widthToScroll: carouselViewport.offsetWidth,
+            timeToScroll: 400
         }
     }
 
     renderSlides() {
         return data.map((country, index)=>{
             return(
-                <Slide country={country} 
-                key={index}
-                ref={compSlide => this.slide = compSlide}/>
+                <Slide country={country} key={index}/>
             )
         });
     }
@@ -215,7 +190,6 @@ class Carousel extends Component {
     handleRightNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
-        console.log(carouselViewport.scrollLeft)
 
         let {widthToScroll, timeToScroll} = this.widthAndTimeToScroll();
 
@@ -236,36 +210,43 @@ class Carousel extends Component {
     render() {
         const {allTheWayLeft, allTheWayRight} = this.state;
         const navClasses = classnames({
-            'carousel-nav': true,
-            'btn-round': true,
+            'image-carousel-nav': true,
+            'ic-btn-round': true,
             'display-flex-center': true
         });
         const leftNavClasses = classnames({
             'carousel-left-nav': true,
+            'image-carousel-left-nav': true,
             'carousel-nav-disabled': allTheWayLeft
         }, navClasses);
         const rightNavClasses = classnames({
             'carousel-right-nav': true,
+            'image-carousel-right-nav': true,
             'carousel-nav-disabled': allTheWayRight
         }, navClasses);
 
         return(
-            <div className="carousel-container">
-                <div className={leftNavClasses} onClick={this.handleLeftNav}>
-                    <span><i className="fas fa-chevron-left fa-sm"></i></span>
-                </div>
+            <div className="display-flex-center">
+                <div className="carousel-container image-carousel-container" style={{width: `100%`}}>
+                    <div className={leftNavClasses} onClick={this.handleLeftClick}>
+                        <span><i className="fas fa-chevron-left fa-sm"></i></span>
+                    </div>
 
-                <div className="carousel-viewport" 
-                ref="carouselViewport"
-                onScroll={throttle(this.onScrollCarousel, 250)}>
-                    {this.renderSlides()}
-                </div>
+                    {/* disabling horizontal scroll */}
+                    <div
+                    style={{overflowX: 'hidden'}}
+                    className="carousel-viewport" 
+                    ref="carouselViewport"
+                    onScroll={throttle(this.onScrollCarousel, 250)}>
+                        {this.renderSlides()}
+                    </div>
 
-                <div className={rightNavClasses} onClick={this.handleRightNav}>
-                    <span><i className="fas fa-chevron-right fa-sm"></i></span>
+                    <div className={rightNavClasses} onClick={this.handleRightClick}>
+                        <span><i className="fas fa-chevron-right fa-sm"></i></span>
+                    </div>
                 </div>
             </div>
         )
     }
 }
-export default Carousel;
+export default ImageCarousel;

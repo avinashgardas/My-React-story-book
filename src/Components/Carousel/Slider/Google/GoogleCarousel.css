@@ -20,6 +20,10 @@
     z-index: 1;
     position: relative;
 }
+.google-viewport {
+    padding-left: 150px; /* google like carousel */
+    padding-right: 20px; /* google like carousel */
+}
 
 .carousel-viewport::-webkit-scrollbar { /* to remove scroll bar in webkit */
     /* display: none; */
@@ -48,11 +52,17 @@
 }
 
 .carousel-left-nav {
-    left: 0;
+    
+}
+.google-carousel-left-nav {
+    left: 8px; /* google like carousel */
 }
 
 .carousel-right-nav {
-    right: 0;
+    
+}
+.google-carousel-right-nav {
+    right: 8px; /* google like carousel */
 }
 
 .carousel-nav-disabled {

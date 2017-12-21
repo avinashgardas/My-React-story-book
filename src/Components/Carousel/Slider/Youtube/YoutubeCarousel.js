@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './Carousel.css';
-import data from './data.json';
-import scrollTo from './scrollToAnimate';
+import './YoutubeCarousel.css';
+import data from './youtubedata.json';
+import scrollTo from './../scrollToAnimate';
 import throttle from 'lodash.throttle';
 import classnames from 'classnames';
 
@@ -16,21 +16,17 @@ function Slide(props) {
 
     const {url,alpha3,file_url,name,license} = props.country;
     return(
-        <div id="#default-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
-            <div className="slide-div-background-image-full" style={{width: `100%`, height: 70, backgroundImage: `url('https:${file_url}')`}}></div>
+        <div id="#youtube-carousel" className="slide boxshadow" style={{height: 160, width: 188}}>
+            <div className="slide-div-background-image-full" style={{width: `100%`, height: 110, backgroundImage: `url('https:${file_url}')`}}></div>
 
             <div className="slide-div-title display-flex-center" style={{width: `100%`, height: 50, padding: 0, marginTop: 4, marginBottom: 4}}>
                 <span >{name}</span>
-            </div>
-
-            <div className="slide-div-code display-flex-center" style={{width: `100%`, height: 30, padding: 0, marginTop: 0, marginBottom: 4}}>
-                {alpha3}
             </div>
         </div>
     )
 }
 
-class Carousel extends Component {
+class YoutubeCarousel extends Component {
     constructor(props) {
         super(props);
         this.animatingLeft = false;
@@ -149,12 +145,12 @@ class Carousel extends Component {
             }
         }
         else {
-            let widthOfEachSlide = document.getElementById('#default-carousel').offsetWidth;
+            let widthOfEachSlide = document.getElementById('#youtube-carousel').offsetWidth;
             let timeToMoveOneSlide = 200;
             
             return {
-                //widthToScroll: dynamic width
-                widthToScroll: numberOfSlidesToScroll * widthOfEachSlide,
+                //widthToScroll: total width
+                widthToScroll: carouselViewport.offsetWidth,
                 timeToScroll:  Math.min( (numberOfSlidesToScroll * timeToMoveOneSlide), 400)
             }
         }
@@ -215,7 +211,6 @@ class Carousel extends Component {
     handleRightNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
-        console.log(carouselViewport.scrollLeft)
 
         let {widthToScroll, timeToScroll} = this.widthAndTimeToScroll();
 
@@ -251,21 +246,23 @@ class Carousel extends Component {
 
         return(
             <div className="carousel-container">
-                <div className={leftNavClasses} onClick={this.handleLeftNav}>
+                <div className={leftNavClasses} onClick={this.handleLeftClick}>
                     <span><i className="fas fa-chevron-left fa-sm"></i></span>
                 </div>
 
-                <div className="carousel-viewport" 
+                <div 
+                style={{overflowX: 'hidden'}}
+                className="carousel-viewport youtube-viewport"
                 ref="carouselViewport"
                 onScroll={throttle(this.onScrollCarousel, 250)}>
                     {this.renderSlides()}
                 </div>
 
-                <div className={rightNavClasses} onClick={this.handleRightNav}>
+                <div className={rightNavClasses} onClick={this.handleRightClick}>
                     <span><i className="fas fa-chevron-right fa-sm"></i></span>
                 </div>
             </div>
         )
     }
 }
-export default Carousel;
+export default YoutubeCarousel;

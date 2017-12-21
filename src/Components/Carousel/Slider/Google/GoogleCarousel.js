@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './Carousel.css';
-import data from './data.json';
-import scrollTo from './scrollToAnimate';
+import './GoogleCarousel.css';
+import data from './../data.json';
+import scrollTo from './../scrollToAnimate';
 import throttle from 'lodash.throttle';
 import classnames from 'classnames';
 
@@ -16,7 +16,7 @@ function Slide(props) {
 
     const {url,alpha3,file_url,name,license} = props.country;
     return(
-        <div id="#default-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
+        <div id="#google-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
             <div className="slide-div-background-image-full" style={{width: `100%`, height: 70, backgroundImage: `url('https:${file_url}')`}}></div>
 
             <div className="slide-div-title display-flex-center" style={{width: `100%`, height: 50, padding: 0, marginTop: 4, marginBottom: 4}}>
@@ -30,7 +30,7 @@ function Slide(props) {
     )
 }
 
-class Carousel extends Component {
+class GoogleCarousel extends Component {
     constructor(props) {
         super(props);
         this.animatingLeft = false;
@@ -149,7 +149,7 @@ class Carousel extends Component {
             }
         }
         else {
-            let widthOfEachSlide = document.getElementById('#default-carousel').offsetWidth;
+            let widthOfEachSlide = document.getElementById('#google-carousel').offsetWidth;
             let timeToMoveOneSlide = 200;
             
             return {
@@ -215,7 +215,6 @@ class Carousel extends Component {
     handleRightNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
-        console.log(carouselViewport.scrollLeft)
 
         let {widthToScroll, timeToScroll} = this.widthAndTimeToScroll();
 
@@ -242,30 +241,32 @@ class Carousel extends Component {
         });
         const leftNavClasses = classnames({
             'carousel-left-nav': true,
+            'google-carousel-left-nav': true,
             'carousel-nav-disabled': allTheWayLeft
         }, navClasses);
         const rightNavClasses = classnames({
             'carousel-right-nav': true,
+            'google-carousel-right-nav': true,
             'carousel-nav-disabled': allTheWayRight
         }, navClasses);
 
         return(
             <div className="carousel-container">
-                <div className={leftNavClasses} onClick={this.handleLeftNav}>
+                <div className={leftNavClasses} onClick={this.handleLeftClick}>
                     <span><i className="fas fa-chevron-left fa-sm"></i></span>
                 </div>
 
-                <div className="carousel-viewport" 
+                <div className="carousel-viewport google-viewport" 
                 ref="carouselViewport"
                 onScroll={throttle(this.onScrollCarousel, 250)}>
                     {this.renderSlides()}
                 </div>
 
-                <div className={rightNavClasses} onClick={this.handleRightNav}>
+                <div className={rightNavClasses} onClick={this.handleRightClick}>
                     <span><i className="fas fa-chevron-right fa-sm"></i></span>
                 </div>
             </div>
         )
     }
 }
-export default Carousel;
+export default GoogleCarousel;

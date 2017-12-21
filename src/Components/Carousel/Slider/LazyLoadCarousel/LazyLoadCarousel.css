@@ -122,3 +122,7 @@
     color: #848484;
     text-overflow: ellipsis;
 }
+
+.lazyload-blur-filter {
+    filter: blur(2px);
+}

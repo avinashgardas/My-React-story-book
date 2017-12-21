@@ -5,7 +5,9 @@ function scrollTo(params) {
             element,
             to,
             duration,
-            scrollDirection
+            scrollDirection,
+            callback,
+            context
         } = params;
     
         var start = element[scrollDirection],
@@ -20,6 +22,7 @@ function scrollTo(params) {
             if (elapsedTime < duration) {
                 window.requestAnimationFrame(animateScroll.bind(null, elapsedTime));
             } else {
+                callback.call(context);
                 //return promise
                 res();
             }

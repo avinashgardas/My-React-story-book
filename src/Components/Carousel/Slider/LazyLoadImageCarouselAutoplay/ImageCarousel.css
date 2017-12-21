@@ -8,6 +8,9 @@
     /* container is relative, so that buttons are absolute */
     position: relative;
 }
+.image-carousel-container {
+    width: 450px;
+}
 
 .carousel-viewport {
     white-space: nowrap; /* wrap all elements in carousel-viewport to 1 line; excess data is displayed out of screen */
@@ -25,12 +28,12 @@
     /* display: none; */
 }
 
-.carousel-nav {
+.image-carousel-nav {
     /* flex-basis: 35px; basically its like width */
     /* flex-shrink: 0;  shrinking is false */
     cursor: pointer;
     padding: 0;
-    opacity: 0.9;
+    opacity: 0;
     color: #757575;
 
     position: absolute;
@@ -42,17 +45,25 @@
     -webkit-transition: opacity 0.3s ease-in-out,visibility 0.3s;
     transition: opacity 0.3s ease-in-out,visibility 0.3s;
 }
-.carousel-nav:hover {
-    opacity: 1;
+.image-carousel-nav:hover {
     color: #000;
+}
+.image-carousel-container:hover > .image-carousel-nav {
+    opacity: 1;
 }
 
 .carousel-left-nav {
     left: 0;
 }
+.image-carousel-left-nav {
+    left: 12px !important;
+}
 
 .carousel-right-nav {
     right: 0;
+}
+.image-carousel-right-nav {
+    right: 12px !important;
 }
 
 .carousel-nav-disabled {
@@ -91,8 +102,8 @@
     margin-top: 8px;
     margin-bottom: 8px;
 
-    margin-left: 4px;
-    margin-right: 4px;
+    /* margin-left: 4px;
+    margin-right: 4px; */
     padding: 0px;
     display: inline-block; /* so slides are next to each other */
     vertical-align: top;
@@ -100,11 +111,14 @@
 
     text-align: center;
 }
-.slide:first-child {
-    margin-left: 8px;
+.image-slide {
+    margin: 0 !important;
 }
-.slide:last-child {
-    margin-right: 8px;
+.image-slide:first-child {
+    
+}
+.image-slide:last-child {
+    
 }
 
 /* slide details */
@@ -121,4 +135,8 @@
     font-size: 11px;
     color: #848484;
     text-overflow: ellipsis;
+}
+
+.lazyload-blur {
+    filter: blur(3px);
 }

@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import './Carousel.css';
+import './LazyLoadCarousel.css';
 import data from './data.json';
-import scrollTo from './scrollToAnimate';
+import scrollTo from './../scrollToAnimate';
 import throttle from 'lodash.throttle';
 import classnames from 'classnames';
+import './shineGradientAnimation.css';
 
 function Slide(props) {
     // {
@@ -14,23 +15,22 @@ function Slide(props) {
     // "license": "Public domain"
     // }
 
-    const {url,alpha3,file_url,name,license} = props.country;
+    const {url,alpha3,file_url,name,license, image} = props.country;
     return(
-        <div id="#default-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
-            <div className="slide-div-background-image-full" style={{width: `100%`, height: 70, backgroundImage: `url('https:${file_url}')`}}></div>
+        <div id="#default-carousel" className="slide boxshadow lazyload-image-carousel-container" style={{height: 160, width: 100}}>
+            <div className="slide-div-background-image-full lazyload-blur-filter" style={{width: `100%`, height: 110, backgroundImage: `url('https:${file_url}')`}}></div>
 
             <div className="slide-div-title display-flex-center" style={{width: `100%`, height: 50, padding: 0, marginTop: 4, marginBottom: 4}}>
                 <span >{name}</span>
             </div>
 
-            <div className="slide-div-code display-flex-center" style={{width: `100%`, height: 30, padding: 0, marginTop: 0, marginBottom: 4}}>
-                {alpha3}
-            </div>
+            {/* shine div */}
+            <div className="show-off" />
         </div>
     )
 }
 
-class Carousel extends Component {
+class LazyLoadCarousel extends Component {
     constructor(props) {
         super(props);
         this.animatingLeft = false;
@@ -268,4 +268,4 @@ class Carousel extends Component {
         )
     }
 }
-export default Carousel;
+export default LazyLoadCarousel;

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './Carousel.css';
-import data from './data.json';
-import scrollTo from './scrollToAnimate';
+import './SingleItemCarousel.css';
+import data from './../data.json';
+import scrollTo from './../scrollToAnimate';
 import throttle from 'lodash.throttle';
 import classnames from 'classnames';
 
@@ -16,12 +16,8 @@ function Slide(props) {
 
     const {url,alpha3,file_url,name,license} = props.country;
     return(
-        <div id="#default-carousel" className="slide boxshadow" style={{height: 160, width: 100}}>
-            <div className="slide-div-background-image-full" style={{width: `100%`, height: 70, backgroundImage: `url('https:${file_url}')`}}></div>
-
-            <div className="slide-div-title display-flex-center" style={{width: `100%`, height: 50, padding: 0, marginTop: 4, marginBottom: 4}}>
-                <span >{name}</span>
-            </div>
+        <div id="#single-item-carousel" className="slide single-item-slide boxshadow" style={{height: 160, width: 450}}>
+            <div className="slide-div-background-image-full" style={{width: `100%`, height: 130, backgroundImage: `url('https:${file_url}')`}}></div>
 
             <div className="slide-div-code display-flex-center" style={{width: `100%`, height: 30, padding: 0, marginTop: 0, marginBottom: 4}}>
                 {alpha3}
@@ -30,14 +26,14 @@ function Slide(props) {
     )
 }
 
-class Carousel extends Component {
+class SingleItemCarousel extends Component {
     constructor(props) {
         super(props);
         this.animatingLeft = false;
         this.animatingRight = false;
 
         this.state = {
-            numberOfSlidesToScroll: 6,
+            numberOfSlidesToScroll: 'full',
             allTheWayLeft: false,
             allTheWayRight: false
         }
@@ -52,7 +48,7 @@ class Carousel extends Component {
         this.checkIfSlidesAllTheWayOver();
 
         //call this when component has mounted, inorder to determine innerWidth
-        this.checkNumberOfSlidesToScroll();
+        //this.checkNumberOfSlidesToScroll();
 
         window.addEventListener("resize", throttle(this.onResize, 250));
         window.addEventListener("keydown", this.onKeydown);
@@ -128,7 +124,7 @@ class Carousel extends Component {
             numberOfSlidesToScroll = 'full';
         }
         else {
-            numberOfSlidesToScroll = 6;
+            numberOfSlidesToScroll = 'full';
         }
 
         if(this.state.numberOfSlidesToScroll !== numberOfSlidesToScroll) {
@@ -141,31 +137,37 @@ class Carousel extends Component {
         const {carouselViewport} = this.refs;
         let numberOfSlidesToScroll = this.state.numberOfSlidesToScroll;
 
-        if(numberOfSlidesToScroll === 'full') {
-            //widthToScroll: total width of carousel view port for mobile
-            return {
-                widthToScroll: carouselViewport.offsetWidth,
-                timeToScroll: 400
-            }
-        }
-        else {
-            let widthOfEachSlide = document.getElementById('#default-carousel').offsetWidth;
-            let timeToMoveOneSlide = 200;
+        // if(numberOfSlidesToScroll === 'full') {
+        //     //widthToScroll: total width of carousel view port for mobile
+        //     let widthOfEachSlide = document.querySelector('.slide').offsetWidth;
             
-            return {
-                //widthToScroll: dynamic width
-                widthToScroll: numberOfSlidesToScroll * widthOfEachSlide,
-                timeToScroll:  Math.min( (numberOfSlidesToScroll * timeToMoveOneSlide), 400)
-            }
+        //     return {
+        //         widthToScroll: carouselViewport.offsetWidth,
+        //         timeToScroll: 400
+        //     }
+        // }
+        // else {
+        //     let widthOfEachSlide = document.querySelector('.slide').offsetWidth;
+        //     let timeToMoveOneSlide = 200;
+            
+        //     return {
+        //         //widthToScroll: total width of carousel view port for mobile
+        //         widthToScroll: carouselViewport.offsetWidth,
+        //         timeToScroll:  Math.min( (numberOfSlidesToScroll * timeToMoveOneSlide), 400)
+        //     }
+        // }
+        let widthOfEachSlide = document.getElementById('#single-item-carousel').offsetWidth;
+        
+        return {
+            widthToScroll: carouselViewport.offsetWidth,
+            timeToScroll: 400
         }
     }
 
     renderSlides() {
         return data.map((country, index)=>{
             return(
-                <Slide country={country} 
-                key={index}
-                ref={compSlide => this.slide = compSlide}/>
+                <Slide country={country} key={index}/>
             )
         });
     }
@@ -215,7 +217,6 @@ class Carousel extends Component {
     handleRightNav = () => {
         //take this.refs into a const/var
         const {carouselViewport} = this.refs;
-        console.log(carouselViewport.scrollLeft)
 
         let {widthToScroll, timeToScroll} = this.widthAndTimeToScroll();
 
@@ -242,30 +243,38 @@ class Carousel extends Component {
         });
         const leftNavClasses = classnames({
             'carousel-left-nav': true,
+            'single-item-carousel-left-nav': true,
             'carousel-nav-disabled': allTheWayLeft
         }, navClasses);
         const rightNavClasses = classnames({
             'carousel-right-nav': true,
+            'single-item-carousel-right-nav': true,
             'carousel-nav-disabled': allTheWayRight
         }, navClasses);
+        const containerWidth = 450 + 16;
 
         return(
-            <div className="carousel-container">
-                <div className={leftNavClasses} onClick={this.handleLeftNav}>
-                    <span><i className="fas fa-chevron-left fa-sm"></i></span>
-                </div>
+            <div className="display-flex-center">
+                <div className="carousel-container single-item-carousel-container" style={{width: containerWidth}}>
+                    <div className={leftNavClasses} onClick={this.handleLeftClick}>
+                        <span><i className="fas fa-chevron-left fa-sm"></i></span>
+                    </div>
 
-                <div className="carousel-viewport" 
-                ref="carouselViewport"
-                onScroll={throttle(this.onScrollCarousel, 250)}>
-                    {this.renderSlides()}
-                </div>
+                    {/* disabling horizontal scroll */}
+                    <div
+                    style={{overflowX: 'hidden'}}
+                    className="carousel-viewport" 
+                    ref="carouselViewport"
+                    onScroll={throttle(this.onScrollCarousel, 250)}>
+                        {this.renderSlides()}
+                    </div>
 
-                <div className={rightNavClasses} onClick={this.handleRightNav}>
-                    <span><i className="fas fa-chevron-right fa-sm"></i></span>
+                    <div className={rightNavClasses} onClick={this.handleRightClick}>
+                        <span><i className="fas fa-chevron-right fa-sm"></i></span>
+                    </div>
                 </div>
             </div>
         )
     }
 }
-export default Carousel;
+export default SingleItemCarousel;
